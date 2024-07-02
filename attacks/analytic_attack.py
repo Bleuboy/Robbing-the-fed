@@ -45,6 +45,7 @@ class AnalyticAttacker(_BaseAttacker):
         """The basic trick to invert a FC layer."""
         # By the way the labels are exactly at (bias_grad < 0).nonzero() if they are unique
         valid_classes = bias_grad != 0
+        print(weight_grad.shape, bias_grad.shape)
         intermediates = weight_grad[valid_classes, :] / bias_grad[valid_classes, None]
         if len(image_positions) == 0:
             reconstruction_data = intermediates
@@ -72,6 +73,7 @@ class ImprintAttacker(AnalyticAttacker):
 
         bias_grad = shared_data["gradients"][0][bias_idx].clone()
         weight_grad = shared_data["gradients"][0][weight_idx].clone()
+        print(weight_grad.shape, bias_grad.shape)
         if server_secrets["ImprintBlock"]["structure"] == "cumulative":
             for i in reversed(list(range(1, weight_grad.shape[0]))):
                 weight_grad[i] -= weight_grad[i - 1]
